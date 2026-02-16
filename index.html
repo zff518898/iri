@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>人际反应指针量表（IRI）</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #f5f7fa; color: #333; line-height: 1.6; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background-color: white; border-radius: 15px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); overflow: hidden; }
+        
+        header {
+            background: linear-gradient(135deg, #ff7e5f 0%, #feb47b 100%);
+            color: white; padding: 30px; text-align: center;
+        }
+        header h1 { font-size: 2.2rem; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 15px; }
+        .subtitle { font-size: 1.2rem; opacity: 0.9; margin-bottom: 20px; }
+        .disclaimer {
+            background-color: rgba(255, 255, 255, 0.15);
+            border-left: 4px solid #ffcc00; padding: 15px; border-radius: 5px;
+            text-align: left; margin-top: 20px; font-size: 0.95rem;
+        }
+        
+        .card { background-color: white; border-radius: 10px; padding: 30px; margin: 20px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05); }
+        .hidden { display: none !important; }
+        
+        .options-info {
+            display: flex; flex-wrap: wrap; justify-content: space-between; margin: 25px 0; gap: 10px;
+        }
+        .option-item {
+            flex: 1; min-width: 120px; background-color: #f0f5ff; padding: 12px; border-radius: 8px; text-align: center;
+        }
+        .option-label {
+            display: inline-block; width: 30px; height: 30px; background-color: #ff7e5f;
+            color: white; border-radius: 50%; line-height: 30px; margin-right: 10px; font-weight: bold;
+        }
+        
+        .btn-primary, .btn-secondary {
+            padding: 14px 28px; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: 600;
+            cursor: pointer; transition: all 0.3s ease; display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+        }
+        .btn-primary { background-color: #ff7e5f; color: white; }
+        .btn-primary:hover { background-color: #e5674a; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(255, 126, 95, 0.3); }
+        .btn-secondary { background-color: #f0f5ff; color: #ff7e5f; border: 2px solid #ff7e5f; }
+        .btn-secondary:hover { background-color: #e1e9ff; }
+        .actions { display: flex; justify-content: center; gap: 20px; margin-top: 30px; }
+        
+        #questions-container { margin: 25px 0; }
+        .question { margin-bottom: 25px; padding-bottom: 25px; border-bottom: 1px solid #eee; }
+        .question:last-child { border-bottom: none; }
+        .question-text { font-size: 1.1rem; margin-bottom: 15px; color: #333; font-weight: 600; }
+        .options { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+        .option {
+            background-color: #f8f9fa; border: 2px solid #e9ecef; border-radius: 8px; padding: 12px 15px;
+            cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center;
+        }
+        .option:hover { background-color: #e9ecef; }
+        .option.selected { background-color: #ffe5db; border-color: #ff7e5f; color: #ff7e5f; }
+        .option input { margin-right: 10px; }
+        .navigation {
+            display: flex; justify-content: space-between; align-items: center; margin-top: 30px;
+            padding-top: 20px; border-top: 1px solid #eee;
+        }
+        #page-info { font-weight: 600; color: #ff7e5f; }
+        
+        .progress-container { margin: 20px 0; }
+        .progress-bar { height: 10px; background-color: #e9ecef; border-radius: 5px; overflow: hidden; }
+        .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #ff7e5f, #feb47b); border-radius: 5px; transition: width 0.5s ease; }
+        .progress-text { text-align: center; margin-top: 10px; font-weight: 600; color: #ff7e5f; }
+        
+        .score-category { margin-bottom: 30px; padding: 20px; background-color: #f8f9fa; border-radius: 10px; }
+        .score-category h3 { margin-bottom: 15px; color: #ff7e5f; font-size: 1.4rem; }
+        .score-bar { height: 25px; background-color: #e9ecef; border-radius: 12px; overflow: hidden; margin-bottom: 15px; }
+        .score-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #ff7e5f, #feb47b); border-radius: 12px; transition: width 1.5s ease; }
+        .score-details { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
+        .score-details p { margin: 0; font-weight: 600; }
+        
+        .dimension-card {
+            border-radius: 10px; padding: 20px; margin-bottom: 20px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            background-color: #f8f9fa;
+        }
+        .dimension-card h4 { display: flex; align-items: center; gap: 10px; color: #ff7e5f; margin-bottom: 10px; }
+        .dimension-bar { height: 15px; background-color: #e9ecef; border-radius: 10px; overflow: hidden; margin: 10px 0; }
+        .dimension-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #ff7e5f, #feb47b); border-radius: 10px; }
+        
+        #interpretation { margin-top: 30px; padding: 25px; background-color: #f8f9fa; border-radius: 10px; }
+        #interpretation h3 { margin-bottom: 15px; color: #ff7e5f; display: flex; align-items: center; gap: 10px; }
+        .recommendation-item { background-color: white; padding: 15px; margin-bottom: 15px; border-radius: 8px; border-left: 4px solid #ff7e5f; }
+        
+        footer { background-color: #f8f9fa; padding: 20px; text-align: center; color: #666; font-size: 0.9rem; line-height: 1.5; border-top: 1px solid #eee; }
+        
+        @media (max-width: 768px) {
+            .container { border-radius: 0; }
+            header h1 { font-size: 1.8rem; flex-direction: column; gap: 10px; }
+            .card { padding: 20px; margin: 10px; }
+            .options { grid-template-columns: 1fr; }
+            .score-details { grid-template-columns: 1fr; gap: 10px; }
+            .actions { flex-direction: column; }
+            .btn-primary, .btn-secondary { width: 100%; margin-bottom: 10px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-heart"></i> 人际反应指针量表（IRI）</h1>
+            <p class="subtitle">评估共情的四个维度：观点采择、共情关注、幻想、个人痛苦</p>
+            <div class="disclaimer">
+                <p><strong>重要提示：</strong>本量表用于测量个体的共情特质，结果仅供参考，不能替代专业心理评估。</p>
+            </div>
+        </header>
+
+        <main>
+            <!-- 说明部分 -->
+            <section id="instructions" class="card">
+                <h2><i class="fas fa-info-circle"></i> 测试说明</h2>
+                <p>请根据您在<strong>日常生活中</strong>的真实感受，评估每个描述与您的符合程度。答案无对错，请按第一反应作答。</p>
+                <p>每个问题有5个选项：</p>
+                <div class="options-info">
+                    <div class="option-item"><span class="option-label">1</span> 非常不像我</div>
+                    <div class="option-item"><span class="option-label">2</span> 比较不像我</div>
+                    <div class="option-item"><span class="option-label">3</span> 中立</div>
+                    <div class="option-item"><span class="option-label">4</span> 比较像我</div>
+                    <div class="option-item"><span class="option-label">5</span> 非常像我</div>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div id="progress-fill" class="progress-fill" style="width: 0%"></div>
+                    </div>
+                    <div class="progress-text" id="progress-text">请回答所有问题以获得准确结果</div>
+                </div>
+                <button id="start-btn" class="btn-primary">开始测试</button>
+            </section>
+
+            <!-- 问卷部分 -->
+            <section id="questionnaire" class="card hidden">
+                <h2><i class="fas fa-clipboard-list"></i> 人际反应指针量表（IRI）</h2>
+                <div id="questions-container"></div>
+                <div class="navigation">
+                    <button id="prev-btn" class="btn-secondary"><i class="fas fa-arrow-left"></i> 上一题</button>
+                    <span id="page-info">第 <span id="current-page">1</span> 题 / 共 28 题</span>
+                    <button id="next-btn" class="btn-secondary">下一题 <i class="fas fa-arrow-right"></i></button>
+                </div>
+                <button id="submit-btn" class="btn-primary hidden">查看结果</button>
+            </section>
+
+            <!-- 结果部分 -->
+            <section id="results" class="card hidden">
+                <h2><i class="fas fa-chart-bar"></i> 测试结果</h2>
+                
+                <div class="score-category">
+                    <h3>您的共情维度得分</h3>
+                    <div id="dimensions-container"></div>
+                </div>
+                
+                <div id="interpretation">
+                    <h3><i class="fas fa-comment-medical"></i> 结果解读</h3>
+                    <div id="interpretation-content"></div>
+                </div>
+                
+                <div class="actions">
+                    <button id="restart-btn" class="btn-secondary"><i class="fas fa-redo"></i> 重新测试</button>
+                    <button id="print-btn" class="btn-secondary"><i class="fas fa-print"></i> 打印结果</button>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>人际反应指针量表（IRI） - Interpersonal Reactivity Index (Davis, 1980)</p>
+            <p>参考: Davis, M. H. (1980). A multidimensional approach to individual differences in empathy.</p>
+            <p>© 2023 心理健康工具 | 仅供教育参考使用</p>
+        </footer>
+    </div>
+
+    <script>
+        // IRI 28个条目，包含维度信息和反向计分
+        const iriQuestions = [
+            // 观点采择 Perspective Taking (PT)
+            { id: 1, text: "在批评别人之前，我会试着想象如果我是他们会是什么感受。", dimension: "PT", reversed: false },
+            { id: 2, text: "当我与别人有分歧时，我会试着从他们的角度考虑问题。", dimension: "PT", reversed: false },
+            { id: 3, text: "我有时会试着从朋友的角度想象事情来更好地理解他们。", dimension: "PT", reversed: false },
+            { id: 4, text: "我认为每个问题都有两面性，我会试着从两面看。", dimension: "PT", reversed: false },
+            { id: 5, text: "当我生气一个人时，我通常会试着站在他的角度想想。", dimension: "PT", reversed: false },
+            { id: 6, text: "在做决定前，我会考虑每个人的不同意见。", dimension: "PT", reversed: false },
+            { id: 7, text: "当我确信自己是对的时，我不会浪费时间去听别人的争论。", dimension: "PT", reversed: true },
+            
+            // 共情关注 Empathic Concern (EC)
+            { id: 8, text: "我经常会为那些比我更不幸的人感到关心和担忧。", dimension: "EC", reversed: false },
+            { id: 9, text: "我有时会对那些遇到困难的人感到同情。", dimension: "EC", reversed: false },
+            { id: 10, text: "我会被自己看到的事情感动。", dimension: "EC", reversed: false },
+            { id: 11, text: "我认为自己是一个心软的人。", dimension: "EC", reversed: false },
+            { id: 12, text: "我会为他人的不幸感到难过。", dimension: "EC", reversed: false },
+            { id: 13, text: "别人的不幸并不会让我很困扰。", dimension: "EC", reversed: true },
+            { id: 14, text: "当我看到有人被利用时，我会想要保护他们。", dimension: "EC", reversed: false },
+            
+            // 幻想 Fantasy (FS)
+            { id: 15, text: "我经常幻想那些可能发生在我身上的事情。", dimension: "FS", reversed: false },
+            { id: 16, text: "我很容易陷入故事（书、电影）的情节中。", dimension: "FS", reversed: false },
+            { id: 17, text: "看电影或戏剧时，我经常感觉像是身临其境。", dimension: "FS", reversed: false },
+            { id: 18, text: "看完戏或电影后，我感觉自己好像成了其中的一个角色。", dimension: "FS", reversed: false },
+            { id: 19, text: "当我阅读有趣的小说或故事时，我会想象如果故事中的事情发生在我身上会怎样。", dimension: "FS", reversed: false },
+            { id: 20, text: "我很少在看书或电影时完全沉浸其中。", dimension: "FS", reversed: true },
+            { id: 21, text: "在观看一部好电影时，我很容易站在主角的立场上。", dimension: "FS", reversed: false },
+            
+            // 个人痛苦 Personal Distress (PD)
+            { id: 22, text: "在紧急情况下，我会感到担心和不安。", dimension: "PD", reversed: false },
+            { id: 23, text: "我经常在看电影或戏剧时感到紧张。", dimension: "PD", reversed: false },
+            { id: 24, text: "在高度紧张的情况下，我会感到害怕。", dimension: "PD", reversed: false },
+            { id: 25, text: "我有时会感到无助，当我身处一个情绪激动的场合。", dimension: "PD", reversed: false },
+            { id: 26, text: "我很容易受到周围人情绪的影响。", dimension: "PD", reversed: false },
+            { id: 27, text: "与别人在一起时，如果他们情绪低落，我也会感到低落。", dimension: "PD", reversed: false },
+            { id: 28, text: "我发现自己很难处理紧急情况。", dimension: "PD", reversed: false }
+        ];
+
+        // 维度名称映射
+        const dimensionNames = {
+            PT: "观点采择",
+            EC: "共情关注",
+            FS: "幻想",
+            PD: "个人痛苦"
+        };
+
+        // 维度描述
+        const dimensionDesc = {
+            PT: "指个体在日常生活中采纳他人心理观点的倾向。",
+            EC: "指个体对他人的不幸遭遇产生同情、怜悯等情感反应的倾向。",
+            FS: "指个体通过想象将自己投射到虚构情境中的能力。",
+            PD: "指个体在紧张的人际情境中感到不安、焦虑的倾向。"
+        };
+
+        // 应用状态
+        let currentQuestion = 1;
+        let answers = new Array(iriQuestions.length).fill(null);
+
+        // DOM元素
+        const instructionsSection = document.getElementById('instructions');
+        const questionnaireSection = document.getElementById('questionnaire');
+        const resultsSection = document.getElementById('results');
+        const questionsContainer = document.getElementById('questions-container');
+        const startBtn = document.getElementById('start-btn');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const submitBtn = document.getElementById('submit-btn');
+        const restartBtn = document.getElementById('restart-btn');
+        const printBtn = document.getElementById('print-btn');
+        const currentPageSpan = document.getElementById('current-page');
+        const progressFill = document.getElementById('progress-fill');
+        const progressText = document.getElementById('progress-text');
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('IRI初始化...');
+            
+            startBtn.addEventListener('click', startQuestionnaire);
+            prevBtn.addEventListener('click', goToPrevQuestion);
+            nextBtn.addEventListener('click', goToNextQuestion);
+            submitBtn.addEventListener('click', showResults);
+            restartBtn.addEventListener('click', restartQuestionnaire);
+            printBtn.addEventListener('click', printResults);
+            
+            renderQuestion();
+            updateProgress();
+        });
+
+        function startQuestionnaire() {
+            instructionsSection.classList.add('hidden');
+            questionnaireSection.classList.remove('hidden');
+            resultsSection.classList.add('hidden');
+            currentQuestion = 1;
+            renderQuestion();
+        }
+
+        function renderQuestion() {
+            questionsContainer.innerHTML = '';
+            const question = iriQuestions[currentQuestion - 1];
+            
+            const questionElement = document.createElement('div');
+            questionElement.className = 'question';
+            questionElement.innerHTML = `
+                <div class="question-text">${question.id}. ${question.text}</div>
+                <div class="options">
+                    ${[1, 2, 3, 4, 5].map(value => `
+                        <label class="option ${answers[currentQuestion - 1] === value ? 'selected' : ''}">
+                            <input type="radio" name="question-${question.id}" value="${value}" 
+                                   ${answers[currentQuestion - 1] === value ? 'checked' : ''}>
+                            <span class="option-label">${value}</span> ${getOptionText(value)}
+                        </label>
+                    `).join('')}
+                </div>
+            `;
+            
+            const radioInputs = questionElement.querySelectorAll('input[type="radio"]');
+            radioInputs.forEach(input => {
+                input.addEventListener('change', function() {
+                    answers[currentQuestion - 1] = parseInt(this.value);
+                    updateProgress();
+                    
+                    if (currentQuestion < iriQuestions.length) {
+                        currentQuestion++;
+                        setTimeout(() => {
+                            renderQuestion();
+                        }, 300);
+                    } else {
+                        setTimeout(() => {
+                            renderQuestion();
+                        }, 300);
+                    }
+                });
+            });
+            
+            questionsContainer.appendChild(questionElement);
+            
+            if (currentPageSpan) currentPageSpan.textContent = currentQuestion;
+            
+            if (prevBtn) prevBtn.disabled = currentQuestion === 1;
+            if (nextBtn) nextBtn.disabled = currentQuestion === iriQuestions.length;
+            if (submitBtn) {
+                submitBtn.classList.toggle('hidden', currentQuestion !== iriQuestions.length);
+                
+                if (currentQuestion === iriQuestions.length && answers[currentQuestion - 1] !== null) {
+                    submitBtn.disabled = false;
+                } else if (currentQuestion === iriQuestions.length) {
+                    submitBtn.disabled = true;
+                }
+            }
+        }
+
+        function getOptionText(value) {
+            const texts = {
+                1: "非常不像我",
+                2: "比较不像我",
+                3: "中立",
+                4: "比较像我",
+                5: "非常像我"
+            };
+            return texts[value];
+        }
+
+        function updateProgress() {
+            const answeredCount = answers.filter(answer => answer !== null).length;
+            const totalQuestions = iriQuestions.length;
+            const progressPercentage = (answeredCount / totalQuestions) * 100;
+            
+            if (progressFill) progressFill.style.width = `${progressPercentage}%`;
+            if (progressText) {
+                progressText.textContent = `已回答 ${answeredCount} / ${totalQuestions} 题`;
+                if (answeredCount === totalQuestions) {
+                    progressText.innerHTML = `<strong>所有问题已回答完毕！可以点击"查看结果"</strong>`;
+                }
+            }
+        }
+
+        function goToPrevQuestion() {
+            if (currentQuestion > 1) {
+                currentQuestion--;
+                renderQuestion();
+            }
+        }
+
+        function goToNextQuestion() {
+            if (currentQuestion < iriQuestions.length) {
+                currentQuestion++;
+                renderQuestion();
+            }
+        }
+
+        // 计算各维度得分
+        function calculateDimensionScores() {
+            const scores = {
+                PT: { total: 0, count: 0, avg: 0 },
+                EC: { total: 0, count: 0, avg: 0 },
+                FS: { total: 0, count: 0, avg: 0 },
+                PD: { total: 0, count: 0, avg: 0 }
+            };
+            
+            iriQuestions.forEach((q, idx) => {
+                const answer = answers[idx];
+                if (answer !== null) {
+                    let score = answer;
+                    if (q.reversed) {
+                        // 反向计分：6 - 原始分
+                        score = 6 - answer;
+                    }
+                    scores[q.dimension].total += score;
+                    scores[q.dimension].count += 1;
+                }
+            });
+            
+            // 计算平均分（每个维度7题）
+            for (let dim in scores) {
+                if (scores[dim].count > 0) {
+                    scores[dim].avg = (scores[dim].total / scores[dim].count).toFixed(2);
+                }
+            }
+            return scores;
+        }
+
+        function showResults() {
+            const allAnswered = answers.every(answer => answer !== null);
+            if (!allAnswered) {
+                alert('请回答所有问题后再查看结果！');
+                return;
+            }
+            
+            const scores = calculateDimensionScores();
+            
+            // 渲染维度得分卡片
+            renderDimensionCards(scores);
+            
+            // 生成解读
+            generateInterpretation(scores);
+            
+            questionnaireSection.classList.add('hidden');
+            resultsSection.classList.remove('hidden');
+            resultsSection.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function renderDimensionCards(scores) {
+            const container = document.getElementById('dimensions-container');
+            container.innerHTML = '';
+            
+            const dimensions = ['PT', 'EC', 'FS', 'PD'];
+            dimensions.forEach(dim => {
+                const avg = parseFloat(scores[dim].avg);
+                const percentage = (avg / 5) * 100;
+                
+                const card = document.createElement('div');
+                card.className = 'dimension-card';
+                card.innerHTML = `
+                    <h4><i class="fas fa-chart-pie"></i> ${dimensionNames[dim]}</h4>
+                    <p>平均分: ${scores[dim].avg} / 5</p>
+                    <div class="dimension-bar">
+                        <div class="dimension-fill" style="width: ${percentage}%"></div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function generateInterpretation(scores) {
+            const interpretationContent = document.getElementById('interpretation-content');
+            
+            let html = `<p>IRI测量共情的四个维度，每个维度得分范围1-5，分数越高表示在该维度上的倾向越强。</p>`;
+            
+            const dimensions = ['PT', 'EC', 'FS', 'PD'];
+            dimensions.forEach(dim => {
+                html += `
+                    <div class="recommendation-item">
+                        <h4>${dimensionNames[dim]}</h4>
+                        <p>${dimensionDesc[dim]} 您的平均分为 <strong>${scores[dim].avg}</strong>。</p>
+                    </div>
+                `;
+            });
+            
+            interpretationContent.innerHTML = html;
+        }
+
+        function restartQuestionnaire() {
+            answers = new Array(iriQuestions.length).fill(null);
+            currentQuestion = 1;
+            updateProgress();
+            resultsSection.classList.add('hidden');
+            instructionsSection.classList.remove('hidden');
+            instructionsSection.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function printResults() {
+            const printWindow = window.open('', '_blank');
+            const scores = calculateDimensionScores();
+            
+            printWindow.document.write(`
+                <html>
+                <head>
+                    <title>人际反应指针量表(IRI)评估报告</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; line-height: 1.6; padding: 20px; }
+                        h1, h2, h3 { color: #333; }
+                        .score-table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+                        .score-table th, .score-table td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+                        .score-table th { background-color: #f2f2f2; }
+                        .dimension-box { margin: 15px 0; padding: 15px; background-color: #f8f9fa; border-left: 4px solid #ff7e5f; }
+                        .footer { margin-top: 30px; font-size: 12px; color: #666; text-align: center; }
+                    </style>
+                </head>
+                <body>
+                    <h1>人际反应指针量表(IRI)评估报告</h1>
+                    <p><strong>测试日期：</strong> ${new Date().toLocaleDateString('zh-CN')}</p>
+                    
+                    <h2>各维度得分</h2>
+                    <table class="score-table">
+                        <tr><th>维度</th><th>平均分</th><th>解读</th></tr>
+                        <tr><td>观点采择(PT)</td><td>${scores.PT.avg}</td><td>${dimensionDesc.PT}</td></tr>
+                        <tr><td>共情关注(EC)</td><td>${scores.EC.avg}</td><td>${dimensionDesc.EC}</td></tr>
+                        <tr><td>幻想(FS)</td><td>${scores.FS.avg}</td><td>${dimensionDesc.FS}</td></tr>
+                        <tr><td>个人痛苦(PD)</td><td>${scores.PD.avg}</td><td>${dimensionDesc.PD}</td></tr>
+                    </table>
+                    
+                    <h2>重要提示</h2>
+                    <div class="dimension-box">
+                        <p>本量表仅用于自我评估，不能替代专业心理诊断。结果反映您的共情倾向，无好坏之分。</p>
+                    </div>
+                    
+                    <div class="footer">
+                        <p>人际反应指针量表（IRI） - Interpersonal Reactivity Index (Davis, 1980)</p>
+                        <p>© ${new Date().getFullYear()} 心理健康工具 | 仅供教育参考使用</p>
+                    </div>
+                </body>
+                </html>
+            `);
+            
+            printWindow.document.close();
+            printWindow.focus();
+            setTimeout(() => printWindow.print(), 250);
+        }
+    </script>
+</body>
+</html>
